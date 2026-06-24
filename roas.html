@@ -116,8 +116,8 @@
         
         <!-- Welcome Banner -->
         <div class="mb-8 text-center ltr:text-left rtl:text-right">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-2" data-i18n="welcomeTitle">כיצד הקמפיינים שלך מתפקדים באמת?</h1>
-            <p class="text-slate-600 dark:text-slate-400 max-w-2xl text-lg" data-i18n="welcomeDesc">שחק עם המספרים כדי לגלות את החזר השקעת הפרסום (ROAS), הרווח הנקי האמיתי שלך ואחוז הרווחיות (ROI) של העסק.</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-2" data-i18n="welcomeTitle">כיצד הקמפיינים שלכם מתפקדים באמת?</h1>
+            <p class="text-slate-600 dark:text-slate-400 max-w-2xl text-lg" data-i18n="welcomeDesc">שחקו עם המספרים כדי לגלות את החזר השקעת הפרסום (ROAS), הרווח הנקי האמיתי שלכם ואחוז הרווחיות (ROI) של העסק.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -137,16 +137,27 @@
                 <!-- Input 1: Ad Spend -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center gap-2">
-                        <label for="adSpendInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="adSpendLabel">תקציב פרסום חודשי</label>
-                        <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[150px]">
-                            <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
-                            <input type="number" id="adSpendInput" value="10000" min="500" max="1000000" step="500" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                        <label for="adSpendInput" class="font-medium text-slate-700 dark:text-slate-300 animate-pulse" data-i18n="adSpendLabel">תקציב פרסום חודשי</label>
+                        <div class="flex flex-col items-end">
+                            <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[170px]">
+                                <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
+                                <input type="number" id="adSpendInput" value="10000" min="500" max="10000000" step="500" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                            </div>
+                            <span id="adSpendFormatLabel" class="text-[10px] text-brand-500 font-bold mt-1">₪10,000</span>
                         </div>
                     </div>
-                    <input type="range" id="adSpendSlider" min="500" max="100000" step="500" value="10000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                    <!-- Upgraded Max to 1,000,000 for high-scale enterprise simulation -->
+                    <input type="range" id="adSpendSlider" min="500" max="1000000" step="500" value="10000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
                     <div class="flex justify-between text-xs text-slate-400">
                         <span id="adSpendMinLabel">₪500</span>
-                        <span id="adSpendMaxLabel">₪100,000+</span>
+                        <span id="adSpendMaxLabel">₪1,000,000+</span>
+                    </div>
+                    <!-- Preset Quick Action Buttons -->
+                    <div class="flex flex-wrap gap-1.5 mt-1 pt-1">
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="spend" data-val="10000">+10K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="spend" data-val="50000">+50K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="spend" data-val="100000">+100K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="spend" data-val="500000">+500K</button>
                     </div>
                 </div>
 
@@ -154,15 +165,26 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center gap-2">
                         <label for="revenueInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="revenueLabel">הכנסה חודשית מפרסום</label>
-                        <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[150px]">
-                            <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
-                            <input type="number" id="revenueInput" value="35000" min="0" max="5000000" step="1000" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                        <div class="flex flex-col items-end">
+                            <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[170px]">
+                                <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
+                                <input type="number" id="revenueInput" value="35000" min="0" max="10000000" step="1000" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                            </div>
+                            <span id="revenueFormatLabel" class="text-[10px] text-brand-500 font-bold mt-1">₪35,000</span>
                         </div>
                     </div>
-                    <input type="range" id="revenueSlider" min="0" max="300000" step="1000" value="35000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                    <!-- Upgraded Max to 5,000,000 for high-scale enterprise simulation -->
+                    <input type="range" id="revenueSlider" min="0" max="5000000" step="1000" value="35000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
                     <div class="flex justify-between text-xs text-slate-400">
                         <span id="revenueMinLabel">₪0</span>
-                        <span id="revenueMaxLabel">₪300,000+</span>
+                        <span id="revenueMaxLabel">₪5,000,000+</span>
+                    </div>
+                    <!-- Preset Quick Action Buttons -->
+                    <div class="flex flex-wrap gap-1.5 mt-1 pt-1">
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="revenue" data-val="50000">+50K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="revenue" data-val="100000">+100K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="revenue" data-val="500000">+500K</button>
+                        <button type="button" class="preset-btn px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-brand-500 hover:text-white rounded-lg transition-colors" data-type="revenue" data-val="1000000">+1M</button>
                     </div>
                 </div>
 
@@ -202,7 +224,7 @@
                             </div>
                             <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[120px]">
                                 <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
-                                <input type="number" id="feeInput" value="0" min="0" max="50000" step="250" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                                <input type="number" id="feeInput" value="0" min="0" max="1000000" step="250" class="w-full bg-transparent focus:outline-none font-bold text-left">
                             </div>
                         </div>
                     </div>
@@ -357,7 +379,7 @@
                 </div>
                 <div>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="modalTitle">תיאום שיחת אסטרטגיה קצרה</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="modalSubtitle">ננתח ביחד את נתוני ה-ROAS שלך ונבנה תוכנית לייעול תקציב השיווק</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="modalSubtitle">ננתח ביחד את נתוני ה-ROAS שלכם ונבנה תוכנית לייעול תקציב השיווק</p>
                 </div>
 
                 <form id="leadForm" class="space-y-3 pt-2 text-right">
@@ -374,7 +396,7 @@
                         <input type="email" id="leadEmail" required placeholder="name@company.com" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 transition-colors">
                     </div>
                     <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl transition-colors text-sm mt-4" id="submitBtnText" data-i18n="formSubmit">
-                        שלח פרטים ונחזור אליך בהקדם
+                        שלחו פרטים ונחזור אליכם בהקדם
                     </button>
                 </form>
                 <p id="formFeedback" class="text-emerald-500 font-bold text-sm hidden"></p>
@@ -386,8 +408,6 @@
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         // --- Web3Forms API Configuration ---
-        // !!! יש להחליף את הערך למטה במפתח ה-Access Key האישי שלך מ-Web3Forms !!!
-        // לקבלת מפתח בחינם (לוקח 5 שניות): https://web3forms.com
         const WEB3FORMS_ACCESS_KEY = "0538ec0b-dc15-4291-a62d-df76589bc7a3";
 
         // --- Multi-language Translations Database ---
@@ -433,7 +453,7 @@
                 formNameLabel: "שם מלא",
                 formPhoneLabel: "מספר טלפון",
                 formEmailLabel: "כתובת אימייל",
-                formSubmit: "שלחו פרטים ונחזור אליך בהקדם",
+                formSubmit: "שלחו פרטים ונחזור אליכם בהקדם",
                 formPlaceholderName: "ישראל ישראלי",
                 
                 // Status notifications (Traffic light)
@@ -448,6 +468,10 @@
                 ctaDescMid: "הקמפיינים שלכם מאוזנים אך עדיין לא מממשים את מלוא הפוטנציאל. תזמנו איתנו שיחה קצרה ונראה איך ניתן להגדיל את אחוז הרווח.",
                 ctaTitleProfit: "התוצאות מעולות! רוצים להגדיל תקציב בצורה בטוחה?",
                 ctaDescProfit: "אתם נמצאים באזור הבטוח של הרווחיות. יש כאן הזדמנות מדהימה לביצוע סקייל ולהכפלת הרווח הנקי שלכם. נשמח לייעץ לכם איך לעשות זאת נכון.",
+
+                // Enterprise dynamic adjustments
+                enterpriseTitle: "מנהלים תקציבי ענק? אתם צריכים דיוק מרבי!",
+                enterpriseDesc: "בסדרי גודל תקציביים כאלו, כל שיפור מזערי של 0.1% ב-ROAS שווה עשרות אלפי שקלים נוספים בשורה התחתונה שלכם. צרו קשר לייעוץ פרימיום ממוקד.",
 
                 // Form states
                 submitting: "שולח פרטים...",
@@ -512,6 +536,9 @@
                 ctaTitleProfit: "Outstanding results! Ready to scale safely?",
                 ctaDescProfit: "You are in the safety zone of high profitability. This is an incredible opportunity to scale up and double your net profits. Let us guide you on scaling correctly.",
 
+                enterpriseTitle: "Managing Large Budgets? High-Scale Precision Needed!",
+                enterpriseDesc: "At your budget scale, even a minor 0.1% optimization in ROAS saves thousands. Contact us for institutional campaign strategy support.",
+
                 submitting: "Submitting...",
                 successMessage: "Thank you! Your details and ROAS data have been sent. We will get in touch shortly.",
                 errNoKey: "Web3Forms Access Key is not configured. Please open the code and set your key.",
@@ -574,6 +601,9 @@
                 ctaTitleProfit: "Отличные результаты! Готовы к безопасному росту?",
                 ctaDescProfit: "Вы находитесь в зоне высокой прибыльности. Это отличный шанс удвоить чистую прибыль. Мы подскажем, как правильно масштабироваться.",
 
+                enterpriseTitle: "Крупные Бюджеты? Необходима Системная Оптимизация!",
+                enterpriseDesc: "При больших бюджетах даже 0.1% улучшения окупаемости сохраняет огромные ресурсы. Свяжитесь с нами для выстраивания профессиональной стратегии.",
+
                 submitting: "Отправка...",
                 successMessage: "Спасибо! Ваши данные отправлены. Мы свяжемся с вами в ближайшее время.",
                 errNoKey: "Не настроен Access Key Web3Forms. Откройте код и установите ваш ключ.",
@@ -609,6 +639,10 @@
         const marginInput = document.getElementById('marginInput');
         const marginSlider = document.getElementById('marginSlider');
         const feeInput = document.getElementById('feeInput');
+
+        // Added format preview elements for UI enhancement
+        const adSpendFormatLabel = document.getElementById('adSpendFormatLabel');
+        const revenueFormatLabel = document.getElementById('revenueFormatLabel');
 
         const toggleAdvanced = document.getElementById('toggleAdvanced');
         const advancedContainer = document.getElementById('advancedContainer');
@@ -662,6 +696,31 @@
             feeInput.addEventListener('input', (e) => {
                 state.agencyFee = parseFloat(e.target.value) || 0;
                 calculateMetrics();
+            });
+
+            // Quick Preset Button handlers (UI Enhancement #3)
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const type = btn.getAttribute('data-type');
+                    const addedVal = parseFloat(btn.getAttribute('data-val'));
+                    
+                    if (type === 'spend') {
+                        let currentVal = parseFloat(adSpendInput.value) || 0;
+                        let newVal = currentVal + addedVal;
+                        adSpendInput.value = newVal;
+                        state.adSpend = newVal;
+                        // Synchronize slider securely
+                        adSpendSlider.value = Math.min(newVal, parseFloat(adSpendSlider.max));
+                    } else if (type === 'revenue') {
+                        let currentVal = parseFloat(revenueInput.value) || 0;
+                        let newVal = currentVal + addedVal;
+                        revenueInput.value = newVal;
+                        state.revenue = newVal;
+                        // Synchronize slider securely
+                        revenueSlider.value = Math.min(newVal, parseFloat(revenueSlider.max));
+                    }
+                    calculateMetrics();
+                });
             });
 
             // Toggle Advanced settings panel
@@ -859,21 +918,11 @@ Return on Investment (ROI): ${roi}%
         }
 
         function updateMinMaxRangeLabels() {
-            const config = currencyConfigs[state.currency];
-            const symbol = config.symbol;
-            
-            // Re-render min/max text nodes dynamically
-            if (state.lang === 'ru') {
-                document.getElementById('adSpendMinLabel').innerText = `500 ${symbol}`;
-                document.getElementById('adSpendMaxLabel').innerText = `100,000 ${symbol}+`;
-                document.getElementById('revenueMinLabel').innerText = `0 ${symbol}`;
-                document.getElementById('revenueMaxLabel').innerText = `300,000 ${symbol}+`;
-            } else {
-                document.getElementById('adSpendMinLabel').innerText = `${symbol}500`;
-                document.getElementById('adSpendMaxLabel').innerText = `${symbol}100,000+`;
-                document.getElementById('revenueMinLabel').innerText = `${symbol}0`;
-                document.getElementById('revenueMaxLabel').innerText = `${symbol}300,000+`;
-            }
+            // UI Enhancement #1: Automatically scale dynamic formatting boundaries to 1M and 5M
+            document.getElementById('adSpendMinLabel').innerText = formatCurrency(500);
+            document.getElementById('adSpendMaxLabel').innerText = formatCurrency(1000000) + "+";
+            document.getElementById('revenueMinLabel').innerText = formatCurrency(0);
+            document.getElementById('revenueMaxLabel').innerText = formatCurrency(5000000) + "+";
         }
 
         // --- Error Alert Visual Modal ---
@@ -908,6 +957,10 @@ Return on Investment (ROI): ${roi}%
             const revenue = state.revenue;
             const margin = state.profitMargin / 100;
             const fee = state.agencyFee;
+
+            // Update live labels under input boxes for flawless UX parsing (UI Enhancement #2)
+            adSpendFormatLabel.innerText = formatCurrency(adSpend);
+            revenueFormatLabel.innerText = formatCurrency(revenue);
 
             const totalSpend = adSpend + fee;
             const roas = adSpend > 0 ? (revenue / adSpend) : 0;
@@ -973,6 +1026,15 @@ Return on Investment (ROI): ${roi}%
                 ctaDesc = t.ctaDescProfit;
             }
 
+            // UI Enhancement #4: High-scale budget dynamic enterprise advisory text adjustment (>= 100,000 threshold)
+            if (state.adSpend >= 100000) {
+                ctaHeading.innerText = t.enterpriseTitle;
+                ctaDescription.innerText = t.enterpriseDesc;
+            } else {
+                ctaHeading.innerText = ctaTitle;
+                ctaDescription.innerText = ctaDesc;
+            }
+
             // Apply gauge status line color
             gaugeProgress.className = `gauge-transition ${statusColor}`;
             roasStatusBar.className = `absolute top-0 right-0 left-0 h-2 bg-${statusColor.split('-')[1]}-500`;
@@ -1003,10 +1065,6 @@ Return on Investment (ROI): ${roi}%
             cogsDisplay.innerText = formatCurrency(cogs);
             grossProfitDisplay.innerText = formatCurrency(grossProfit);
             breakEvenDisplay.innerText = `${breakEvenRoas.toFixed(2)}x`;
-
-            // CTA Box updates
-            ctaHeading.innerText = ctaTitle;
-            ctaDescription.innerText = ctaDesc;
         }
 
         // Currency Formatting Engine
