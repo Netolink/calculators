@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון ROAS אינטראקטיבי ומקצועי</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Heebo for modern Hebrew and Cyrillic/Latin typography support -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- html2pdf.js for exporting PDF directly from client side -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#0056ff',
+                            600: '#004ce6',
+                            700: '#0040c0',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles to enhance slider visuals and smooth transitions */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0056ff;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0056ff;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            border: none;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+        .gauge-transition {
+            transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen transition-colors duration-300">
+
+    <!-- Header Section -->
+    <header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-4 justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-500 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-black text-xl tracking-tight bg-gradient-to-r from-brand-600 to-blue-500 bg-clip-text text-transparent" data-i18n="headerTitle">מחשבון ROAS</span>
+                    <span class="text-xs block text-slate-500 dark:text-slate-400" data-i18n="headerSubtitle">החזר על הוצאות פרסום ורווחיות</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center flex-wrap gap-3">
+                <!-- Currency Selector -->
+                <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 px-2 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-coins text-slate-500 text-xs"></i>
+                    <select id="currencySelector" class="bg-transparent text-xs font-bold focus:outline-none cursor-pointer">
+                        <option value="ILS" selected>ILS (₪)</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="RUB">RUB (₽)</option>
+                    </select>
+                </div>
+
+                <!-- Language Selector -->
+                <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 px-2 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-earth-americas text-slate-500 text-xs"></i>
+                    <select id="langSelector" class="bg-transparent text-xs font-bold focus:outline-none cursor-pointer">
+                        <option value="he" selected>עברית</option>
+                        <option value="en">English</option>
+                        <option value="ru">Русский</option>
+                    </select>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors" title="שינוי מצב תצוגה">
+                    <i id="themeIcon" class="fa-solid fa-moon text-slate-600 dark:text-slate-300"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- Welcome Banner -->
+        <div class="mb-8 text-center ltr:text-left rtl:text-right">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-2" data-i18n="welcomeTitle">כיצד הקמפיינים שלך מתפקדים באמת?</h1>
+            <p class="text-slate-600 dark:text-slate-400 max-w-2xl text-lg" data-i18n="welcomeDesc">שחק עם המספרים כדי לגלות את החזר השקעת הפרסום (ROAS), הרווח הנקי האמיתי שלך ואחוז הרווחיות (ROI) של העסק.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Side: Inputs (Takes 5 cols) -->
+            <section class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-100 dark:shadow-none border border-slate-100 dark:border-slate-700/50 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-500"></i>
+                        <span data-i18n="campaignData">נתוני הקמפיין</span>
+                    </h2>
+                    <button id="resetBtn" class="text-xs text-slate-500 dark:text-slate-400 hover:text-brand-500 transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-right"></i> <span data-i18n="resetData">איפוס נתונים</span>
+                    </button>
+                </div>
+
+                <!-- Input 1: Ad Spend -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="adSpendInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="adSpendLabel">תקציב פרסום חודשי</label>
+                        <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[150px]">
+                            <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
+                            <input type="number" id="adSpendInput" value="10000" min="500" max="1000000" step="500" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                        </div>
+                    </div>
+                    <input type="range" id="adSpendSlider" min="500" max="100000" step="500" value="10000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span id="adSpendMinLabel">₪500</span>
+                        <span id="adSpendMaxLabel">₪100,000+</span>
+                    </div>
+                </div>
+
+                <!-- Input 2: Revenue -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center gap-2">
+                        <label for="revenueInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="revenueLabel">הכנסה חודשית מפרסום</label>
+                        <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[150px]">
+                            <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
+                            <input type="number" id="revenueInput" value="35000" min="0" max="5000000" step="1000" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                        </div>
+                    </div>
+                    <input type="range" id="revenueSlider" min="0" max="300000" step="1000" value="35000" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span id="revenueMinLabel">₪0</span>
+                        <span id="revenueMaxLabel">₪300,000+</span>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings Toggle -->
+                <button id="toggleAdvanced" class="w-full flex items-center justify-between text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-brand-500 py-2 border-t border-b border-dashed border-slate-100 dark:border-slate-700">
+                    <span><i class="fa-solid fa-cog ml-1.5 mr-1.5"></i> <span data-i18n="toggleAdvanced">הגדרות מתקדמות (רווח נקי ו-ROI)</span></span>
+                    <i id="advancedIcon" class="fa-solid fa-chevron-down transition-transform"></i>
+                </button>
+
+                <!-- Advanced Inputs Container -->
+                <div id="advancedContainer" class="hidden space-y-4 pt-2">
+                    <!-- Input 3: Profit Margin (COGS) -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center gap-2">
+                            <div class="flex flex-col">
+                                <label for="marginInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="marginLabel">אחוז רווח גולמי מהמוצר</label>
+                                <span class="text-[11px] text-slate-400" data-i18n="marginHelp">(לאחר עלות המוצר/שירות, לפני פרסום)</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[100px]">
+                                <input type="number" id="marginInput" value="60" min="1" max="100" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                                <span class="text-slate-400 text-sm mr-1">%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="marginSlider" min="5" max="100" step="5" value="60" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500">
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>5%</span>
+                            <span data-i18n="marginRangeHelp">100% (שירות / דיגיטלי)</span>
+                        </div>
+                    </div>
+
+                    <!-- Input 4: Agency / Other Fee -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center gap-2">
+                            <div class="flex flex-col">
+                                <label for="feeInput" class="font-medium text-slate-700 dark:text-slate-300" data-i18n="feeLabel">עלויות נוספות / ריטיינר סוכנות</label>
+                                <span class="text-[11px] text-slate-400" data-i18n="feeHelp">(סכום קבוע נוסף לקמפיין)</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 max-w-[120px]">
+                                <span class="text-slate-400 text-sm ml-1 currency-symbol">₪</span>
+                                <input type="number" id="feeInput" value="0" min="0" max="50000" step="250" class="w-full bg-transparent focus:outline-none font-bold text-left">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Results & Visuals (Takes 7 cols) -->
+            <section class="lg:col-span-7 space-y-6" id="reportArea">
+                
+                <!-- Main Results Card -->
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-slate-100 dark:shadow-none border border-slate-100 dark:border-slate-700/50 relative overflow-hidden">
+                    
+                    <!-- Top Ribbon Indicators -->
+                    <div class="absolute top-0 right-0 left-0 h-2" id="roasStatusBar"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        
+                        <!-- Visual Circle Gauge for ROAS -->
+                        <div class="flex flex-col items-center justify-center p-4">
+                            <div class="relative w-44 h-44 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="88" cy="88" r="76" stroke-width="12" stroke="currentColor" class="text-slate-100 dark:text-slate-700" fill="transparent"></circle>
+                                    <circle id="gaugeProgress" cx="88" cy="88" r="76" stroke-width="12" stroke="currentColor" class="gauge-transition text-brand-500" fill="transparent" stroke-dasharray="477" stroke-dashoffset="477" stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute flex flex-col items-center justify-center text-center">
+                                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-bold" data-i18n="currentRoasLabel">ROAS נוכחי</span>
+                                    <span id="roasDisplay" class="text-4xl font-black text-slate-900 dark:text-white my-0.5">3.5x</span>
+                                    <span id="roasPercentageDisplay" class="text-xs text-slate-500 dark:text-slate-400 font-semibold">(350%)</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Dynamic Badge Status -->
+                            <div id="roasBadge" class="mt-4 px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" id="badgePing"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2" id="badgeDot"></span>
+                                </span>
+                                <span id="badgeText">Calculating...</span>
+                            </div>
+                        </div>
+
+                        <!-- KPI Summary Fields -->
+                        <div class="space-y-4">
+                            <!-- Metric 1: Pure Profit -->
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <span class="text-xs font-bold text-slate-400 block mb-1" data-i18n="netProfitLabel">רווח נקי משוער לקמפיין</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span id="netProfitDisplay" class="text-2xl font-extrabold text-slate-900 dark:text-white">₪25,000</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 block mt-1" id="profitExplanation" data-i18n="profitExplanation">הכנסות פחות תקציב פרסום (ללא עלויות נוספות)</span>
+                            </div>
+
+                            <!-- Metric 2: ROI -->
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <span class="text-xs font-bold text-slate-400 block mb-1" data-i18n="roiLabel">ROI (החזר על השקעה)</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span id="roiDisplay" class="text-2xl font-extrabold text-slate-900 dark:text-white">250%</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 block mt-1" data-i18n="roiExplanation">כל שקל שהושקע בפרסום הניב עוד רווח נקי</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Table / Metrics -->
+                    <div class="mt-6 border-t border-slate-100 dark:border-slate-700 pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <span class="text-[11px] text-slate-400 block" data-i18n="totalSpendLabel">סך השקעה חודשית</span>
+                            <span id="totalInvestmentDisplay" class="font-bold text-sm text-slate-700 dark:text-slate-300">₪10,000</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] text-slate-400 block" data-i18n="cogsLabel">עלות מכר מוצר</span>
+                            <span id="cogsDisplay" class="font-bold text-sm text-slate-700 dark:text-slate-300">₪14,000</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] text-slate-400 block" data-i18n="grossProfitLabel">רווח גולמי</span>
+                            <span id="grossProfitDisplay" class="font-bold text-sm text-slate-700 dark:text-slate-300">₪21,000</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] text-slate-400 block" data-i18n="breakEvenLabel">נקודת איזון (BEP)</span>
+                            <span id="breakEvenDisplay" class="font-bold text-sm text-slate-700 dark:text-slate-300">1.67x</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action (CTA) Box -->
+                <div id="ctaBox" class="bg-gradient-to-r from-brand-600 to-blue-600 rounded-3xl p-6 text-white shadow-xl shadow-brand-500/10 flex flex-col md:flex-row justify-between items-center gap-4 transition-all">
+                    <div class="space-y-1 text-center ltr:text-left rtl:text-right">
+                        <span class="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider" data-i18n="ctaRibbon">המלצה מקצועית</span>
+                        <h3 id="ctaHeading" class="text-lg font-bold">...</h3>
+                        <p id="ctaDescription" class="text-white/80 text-xs max-w-md">...</p>
+                    </div>
+                    <button onclick="openConsultationModal()" class="bg-white text-brand-600 hover:bg-slate-100 font-bold px-5 py-3 rounded-xl shadow-md transition-all text-sm whitespace-nowrap">
+                        <i class="fa-regular fa-calendar-check ml-1 mr-1"></i> <span data-i18n="ctaButton">תיאום פגישת אסטרטגיה</span>
+                    </button>
+                </div>
+
+                <!-- Export Options -->
+                <div class="flex justify-center gap-4">
+                    <button id="downloadPdfBtn" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> <span data-i18n="downloadPdf">הורד דוח בפורמט PDF</span>
+                    </button>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Educational FAQ Section -->
+        <section class="mt-16 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-md border border-slate-100 dark:border-slate-700/50">
+            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center" data-i18n="faqMainTitle">מושגים שחשוב להכיר</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <div class="text-brand-500 text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span data-i18n="faq1Title">מהו ROAS?</span>
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq1Desc">החזר על הוצאות פרסום (Return on Ad Spend). הוא מחושב על ידי חלוקת ההכנסה מהקמפיין בעלות הפרסום שלו. לדוגמה: הכנסה של 4,000₪ מתקציב של 1,000₪ מייצגת ROAS של 4x (או 400%).</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-brand-500 text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-percent"></i>
+                        <span data-i18n="faq2Title">מה ההבדל בין ROAS ל-ROI?</span>
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq2Desc">ROAS מודד רק הכנסות מול פרסום, ללא התחשבות בעלויות ייצור המוצר, שילוח ומשכורות. ROI (החזר השקעה) מודד את הרווח הנקי האמיתי שנשאר בכיס של העסק ביחס לכלל ההשקעות.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-brand-500 text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-scale-unbalanced"></i>
+                        <span data-i18n="faq3Title">מהי נקודת האיזון (Break-Even ROAS)?</span>
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="faq3Desc">זהו יחס ה-ROAS המינימלי הנדרש כדי שהקמפיין לא יפסיד כסף (מכסה גם את עלויות המדיה וגם את עלות המוצר). כל קמפיין שמשיג ROAS גבוה מנקודה זו נחשב לקמפיין רווחי.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 dark:bg-slate-950 text-slate-400 dark:text-slate-600 text-xs py-8 text-center mt-20 border-t border-slate-200/50 dark:border-slate-800">
+        <p data-i18n="footerRights">© 2026 כל הזכויות שמורות. המחשבון נבנה עבור לקוחות ושותפים עסקיים.</p>
+        <p class="mt-1" data-i18n="footerDisclaimer">החישובים מבוססים על הערכות ונתונים שהוזנו על ידי המשתמש ואינם מהווים התחייבות כספית לביצועים.</p>
+    </footer>
+
+    <!-- Consultation Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl relative border border-slate-100 dark:border-slate-700 animate-in fade-in zoom-in duration-200">
+            <button onclick="closeConsultationModal()" class="absolute top-4 left-4 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center space-y-4">
+                <div class="bg-brand-50 dark:bg-brand-500/10 text-brand-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-regular fa-calendar-check"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="modalTitle">תיאום שיחת אסטרטגיה קצרה</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="modalSubtitle">ננתח ביחד את נתוני ה-ROAS שלך ונבנה תוכנית לייעול תקציב השיווק</p>
+                </div>
+
+                <form id="leadForm" class="space-y-3 pt-2 text-right">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1" data-i18n="formNameLabel">שם מלא</label>
+                        <input type="text" id="leadName" required placeholder="ישראל ישראלי" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1" data-i18n="formPhoneLabel">מספר טלפון</label>
+                        <input type="tel" id="leadPhone" required placeholder="050-0000000" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1" data-i18n="formEmailLabel">כתובת אימייל</label>
+                        <input type="email" id="leadEmail" required placeholder="name@company.com" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                    </div>
+                    <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-xl transition-colors text-sm mt-4" id="submitBtnText" data-i18n="formSubmit">
+                        שלח פרטים ונחזור אליך בהקדם
+                    </button>
+                </form>
+                <p id="formFeedback" class="text-emerald-500 font-bold text-sm hidden"></p>
+                <p id="formError" class="text-red-500 font-bold text-sm hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script>
+        // --- Web3Forms API Configuration ---
+        // !!! יש להחליף את הערך למטה במפתח ה-Access Key האישי שלך מ-Web3Forms !!!
+        // לקבלת מפתח בחינם (לוקח 5 שניות): https://web3forms.com
+        const WEB3FORMS_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
+
+        // --- Multi-language Translations Database ---
+        const translations = {
+            he: {
+                headerTitle: "מחשבון ROAS",
+                headerSubtitle: "החזר על הוצאות פרסום ורווחיות",
+                welcomeTitle: "כיצד הקמפיינים שלך מתפקדים באמת?",
+                welcomeDesc: "שחק עם המספרים כדי לגלות את החזר השקעת הפרסום (ROAS), הרווח הנקי האמיתי שלך ואחוז הרווחיות (ROI) של העסק.",
+                campaignData: "נתוני הקמפיין",
+                resetData: "איפוס נתונים",
+                adSpendLabel: "תקציב פרסום חודשי",
+                revenueLabel: "הכנסה חודשית מפרסום",
+                toggleAdvanced: "הגדרות מתקדמות (רווח נקי ו-ROI)",
+                marginLabel: "אחוז רווח גולמי מהמוצר",
+                marginHelp: "(לאחר עלות המוצר/שירות, לפני פרסום)",
+                marginRangeHelp: "100% (שירות / דיגיטלי)",
+                feeLabel: "עלויות נוספות / ריטיינר סוכנות",
+                feeHelp: "(סכום קבוע נוסף לקמפיין)",
+                currentRoasLabel: "ROAS נוכחי",
+                netProfitLabel: "רווח נקי משוער לקמפיין",
+                profitExplanation: "הכנסות פחות תקציב פרסום (ללא עלויות נוספות)",
+                roiLabel: "ROI (החזר על השקעה)",
+                roiExplanation: "כל שקל שהושקע בפרסום הניב עוד רווח נקי",
+                totalSpendLabel: "סך השקעה חודשית",
+                cogsLabel: "עלות מכר מוצר",
+                grossProfitLabel: "רווח גולמי",
+                breakEvenLabel: "נקודת איזון (BEP)",
+                ctaRibbon: "המלצה מקצועית",
+                ctaButton: "תיאום פגישת אסטרטגיה",
+                downloadPdf: "הורד דוח בפורמט PDF",
+                faqMainTitle: "מושגים שחשוב להכיר",
+                faq1Title: "מהו ROAS?",
+                faq1Desc: "החזר על הוצאות פרסום (Return on Ad Spend). הוא מחושב על ידי חלוקת ההכנסה מהקמפיין בעלות הפרסום שלו. לדוגמה: הכנסה של 4,000₪ מתקציב של 1,000₪ מייצגת ROAS של 4x (או 400%).",
+                faq2Title: "מה ההבדל בין ROAS ל-ROI?",
+                faq2Desc: "ROAS מודד רק הכנסות מול פרסום, ללא התחשבות בעלויות ייצור המוצר, שילוח ומשכורות. ROI (החזר השקעה) מודד את הרווח הנקי האמיתי שנשאר בכיס של העסק ביחס לכלל ההשקעות.",
+                faq3Title: "מהי נקודת האיזון (Break-Even ROAS)?",
+                faq3Desc: "זהו יחס ה-ROAS המינימלי הנדרש כדי שהקמפיין לא יפסיד כסף (מכסה גם את עלויות המדיה וגם את עלות המוצר). כל קמפיין שמשיג ROAS גבוה מנקודה זו נחשב לקמפיין רווחי.",
+                footerRights: "© 2026 כל הזכויות שמורות. המחשבון נבנה עבור לקוחות ושותפים עסקיים.",
+                footerDisclaimer: "החישובים מבוססים על הערכות ונתונים שהוזנו על ידי המשתמש ואינם מהווים התחייבות כספית לביצועים.",
+                modalTitle: "תיאום שיחת אסטרטגיה קצרה",
+                modalSubtitle: "ננתח ביחד את נתוני ה-ROAS שלך ונבנה תוכנית לייעול תקציב השיווק",
+                formNameLabel: "שם מלא",
+                formPhoneLabel: "מספר טלפון",
+                formEmailLabel: "כתובת אימייל",
+                formSubmit: "שלח פרטים ונחזור אליך בהקדם",
+                formPlaceholderName: "ישראל ישראלי",
+                
+                // Status notifications (Traffic light)
+                statusLoss: "קמפיין מפסיד כסף (מתחת לנקודת האיזון)",
+                statusBreakEven: "קמפיין בנקודת איזון או רווח מינימלי",
+                statusProfit: "קמפיין רווחי מאוד! מומלץ להגדיל תקציב",
+                
+                // Dynamic CTAs
+                ctaTitleLoss: "הקמפיין שלך שורף תקציב? בוא נתקן את זה!",
+                ctaDescLoss: "ה-ROAS הנוכחי שלך נמצא מתחת לנקודת האיזון. אנחנו יכולים לעזור לך לייעל את קהלי היעד ואת הקריאייטיב כדי להגיע לרווחיות במהירות.",
+                ctaTitleMid: "יש פוטנציאל גבוה, בוא ניקח אותו לשלב הבא!",
+                ctaDescMid: "הקמפיינים שלך מאוזנים אך עדיין לא מממשים את מלוא הפוטנציאל. תזמן איתנו שיחה קצרה ונראה איך ניתן להגדיל את אחוז הרווח.",
+                ctaTitleProfit: "התוצאות מעולות! רוצה להגדיל תקציב בצורה בטוחה?",
+                ctaDescProfit: "אתה נמצא באזור הבטוח של הרווחיות. יש כאן הזדמנות מדהימה לביצוע סקייל ולהכפלת הרווח הנקי שלך. נשמח לייעץ לך איך לעשות זאת נכון.",
+
+                // Form states
+                submitting: "שולח פרטים...",
+                successMessage: "תודה רבה! פרטיך ונתוני ה-ROAS שלך נשלחו אלינו. ניצור קשר בהקדם.",
+                errNoKey: "לא הוגדר מפתח Access Key של Web3Forms. אנא פתח את הקוד והזן את המפתח שלך.",
+                errGeneric: "אירעה שגיאה בשליחת הטופס. אנא נסה שוב.",
+                errNetwork: "שגיאת תקשורת. אנא ודא שאתה מחובר לאינטרנט ונסה שוב.",
+                leadEmailSubject: "ליד חם חדש ממחשבון ה-ROAS שלך!"
+            },
+            en: {
+                headerTitle: "ROAS Calculator",
+                headerSubtitle: "Return on Ad Spend & Profitability",
+                welcomeTitle: "How are your campaigns really performing?",
+                welcomeDesc: "Play with the numbers to discover your Return on Ad Spend (ROAS), true net profit, and Return on Investment (ROI) of your business.",
+                campaignData: "Campaign Data",
+                resetData: "Reset Data",
+                adSpendLabel: "Monthly Ad Budget",
+                revenueLabel: "Monthly Revenue from Ads",
+                toggleAdvanced: "Advanced Settings (Net Profit & ROI)",
+                marginLabel: "Gross Profit Margin",
+                marginHelp: "(After product/service costs, before marketing)",
+                marginRangeHelp: "100% (Service / Digital)",
+                feeLabel: "Additional Costs / Agency Fee",
+                feeHelp: "(Fixed monthly retainer or extra costs)",
+                currentRoasLabel: "Current ROAS",
+                netProfitLabel: "Estimated Net Profit",
+                profitExplanation: "Revenue minus ad budget (excluding other costs)",
+                roiLabel: "ROI (Return on Investment)",
+                roiExplanation: "Every dollar invested in ads generated this much extra net profit",
+                totalSpendLabel: "Total Monthly Spend",
+                cogsLabel: "Cost of Goods Sold (COGS)",
+                grossProfitLabel: "Gross Profit",
+                breakEvenLabel: "Break-Even ROAS",
+                ctaRibbon: "Expert Recommendation",
+                ctaButton: "Schedule Strategy Call",
+                downloadPdf: "Download PDF Report",
+                faqMainTitle: "Important Terms to Know",
+                faq1Title: "What is ROAS?",
+                faq1Desc: "Return on Ad Spend. It is calculated by dividing the campaign revenue by its advertising cost. For example: $4,000 revenue from a $1,000 budget represents a ROAS of 4x (or 400%).",
+                faq2Title: "ROAS vs. ROI",
+                faq2Desc: "ROAS measures only revenue against advertising spend, ignoring product creation, shipping, and salaries. ROI (Return on Investment) measures the actual pocket profit relative to all business investments.",
+                faq3Title: "What is Break-Even ROAS?",
+                faq3Desc: "The minimum ROAS ratio required for the campaign to cover both ad cost and product costs. Any campaign achieving a higher ROAS is profitable.",
+                footerRights: "© 2026 All Rights Reserved. Built for clients and business partners.",
+                footerDisclaimer: "Calculations are based on estimations and user inputs and do not represent a financial guarantee of performance.",
+                modalTitle: "Schedule a Quick Strategy Session",
+                modalSubtitle: "We will analyze your ROAS data together and build a plan to optimize your marketing budget",
+                formNameLabel: "Full Name",
+                formPhoneLabel: "Phone Number",
+                formEmailLabel: "Email Address",
+                formSubmit: "Send Details & Contact Me",
+                formPlaceholderName: "John Doe",
+                
+                statusLoss: "Campaign losing money (Below Break-Even)",
+                statusBreakEven: "Campaign at break-even or low profit",
+                statusProfit: "Highly profitable campaign! Highly recommend scaling up",
+                
+                ctaTitleLoss: "Is your campaign burning budget? Let's fix it!",
+                ctaDescLoss: "Your current ROAS is below the break-even point. We can help you optimize your targeting and creatives to reach profitability quickly.",
+                ctaTitleMid: "High potential discovered, let's unlock it!",
+                ctaDescMid: "Your campaigns are balanced but not yet realizing full potential. Schedule a quick call and let's explore how to increase your margins.",
+                ctaTitleProfit: "Outstanding results! Ready to scale safely?",
+                ctaDescProfit: "You are in the safety zone of high profitability. This is an incredible opportunity to scale up and double your net profits. Let us guide you on scaling correctly.",
+
+                submitting: "Submitting...",
+                successMessage: "Thank you! Your details and ROAS data have been sent. We will get in touch shortly.",
+                errNoKey: "Web3Forms Access Key is not configured. Please open the code and set your key.",
+                errGeneric: "An error occurred while sending. Please try again.",
+                errNetwork: "Network error. Please make sure you are connected to the internet and try again.",
+                leadEmailSubject: "New Hot Lead from your ROAS Calculator!"
+            },
+            ru: {
+                headerTitle: "Калькулятор ROAS",
+                headerSubtitle: "Окупаемость инвестиций и прибыльность",
+                welcomeTitle: "Как на самом деле работают ваши кампании?",
+                welcomeDesc: "Поиграйте с цифрами, чтобы узнать окупаемость ваших рекламных расходов (ROAS), чистую прибыль и рентабельность инвестиций (ROI).",
+                campaignData: "Данные кампании",
+                resetData: "Сбросить данные",
+                adSpendLabel: "Ежемесячный рекламный бюджет",
+                revenueLabel: "Ежемесячный доход с рекламы",
+                toggleAdvanced: "Дополнительные настройки (Прибыль и ROI)",
+                marginLabel: "Маржинальность продукта (%)",
+                marginHelp: "(После себестоимости продукта/услуги, до рекламы)",
+                marginRangeHelp: "100% (Услуга / Диджитал)",
+                feeLabel: "Доп. расходы / Гонорар агентства",
+                feeHelp: "(Фиксированная сумма или гонорар)",
+                currentRoasLabel: "Текущий ROAS",
+                netProfitLabel: "Ожидаемая чистая прибыль",
+                profitExplanation: "Доход минус рекламный бюджет (без учета других затрат)",
+                roiLabel: "ROI (Рентабельность инвестиций)",
+                roiExplanation: "Каждый вложенный в рекламу рубль принес столько чистой прибыли",
+                totalSpendLabel: "Всего инвестиций",
+                cogsLabel: "Себестоимость продаж (COGS)",
+                grossProfitLabel: "Валовая прибыль",
+                breakEvenLabel: "Безубыточный ROAS",
+                ctaRibbon: "Рекомендация эксперта",
+                ctaButton: "Запланировать стратегический звонок",
+                downloadPdf: "Скачать отчет в PDF",
+                faqMainTitle: "Важные термины",
+                faq1Title: "Что такое ROAS?",
+                faq1Desc: "Окупаемость инвестиций в рекламу. Рассчитывается путем деления дохода от кампании на ее рекламную стоимость. Например: доход 4000 ₽ при бюджете 1000 ₽ — это ROAS 4x (или 400%).",
+                faq2Title: "Разница между ROAS и ROI",
+                faq2Desc: "ROAS измеряет только доход по отношению к расходам на рекламу, игнорируя стоимость продукта, доставку и зарплаты. ROI (окупаемость инвестиций) измеряет чистую прибыль, оставшуюся в вашем кармане.",
+                faq3Title: "Что такое безубыточный ROAS?",
+                faq3Desc: "Минимальный коэффициент ROAS, необходимый кампании для работы «в ноль» (покрывая расходы на медиа + себестоимость продукции). Любая кампания выше этой точки прибыльна.",
+                footerRights: "© 2026 Все права защищены. Создано для клиентов и партнеров.",
+                footerDisclaimer: "Расчеты основаны на прогнозах и введенных данных и не являются финансовой гарантии результатов.",
+                modalTitle: "Запланировать короткую консультацию",
+                modalSubtitle: "Мы вместе проанализируем ваши данные ROAS и разработаем план оптимизации маркетингового бюджета",
+                formNameLabel: "Полное имя",
+                formPhoneLabel: "Номер телефона",
+                formEmailLabel: "Электронная почта",
+                formSubmit: "Отправить данные и связаться",
+                formPlaceholderName: "Иван Иванов",
+                
+                statusLoss: "Убыточная кампания (Ниже точки безубыточности)",
+                statusBreakEven: "Кампания в безубытке или низкая прибыль",
+                statusProfit: "Высокорентабельная кампания! Рекомендуем масштабирование",
+                
+                ctaTitleLoss: "Реклама сжигает бюджет? Давайте исправим!",
+                ctaDescLoss: "Ваш текущий ROAS ниже точки безубыточности. Мы поможем оптимизировать таргетинг и креативы для быстрого выхода в плюс.",
+                ctaTitleMid: "Есть отличный потенциал, перейдем на новый уровень!",
+                ctaDescMid: "Ваши кампании стабильны, но потенциал не раскрыт полностью. Запланируйте быстрый звонок, чтобы обсудить рост маржи.",
+                ctaTitleProfit: "Отличные результаты! Готовы к безопасному росту?",
+                ctaDescProfit: "Вы находитесь в зоне высокой прибыльности. Это отличный шанс удвоить чистую прибыль. Мы подскажем, как правильно масштабироваться.",
+
+                submitting: "Отправка...",
+                successMessage: "Спасибо! Ваши данные отправлены. Мы свяжемся с вами в ближайшее время.",
+                errNoKey: "Не настроен Access Key Web3Forms. Откройте код и установите ваш ключ.",
+                errGeneric: "Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз.",
+                errNetwork: "Ошибка сети. Убедитесь, что вы подключены к интернету, и попробуйте снова.",
+                leadEmailSubject: "Новый горячий лид из калькулятора ROAS!"
+            }
+        };
+
+        const currencyConfigs = {
+            ILS: { symbol: "₪", code: "ILS", locale: "he-IL" },
+            USD: { symbol: "$", code: "USD", locale: "en-US" },
+            EUR: { symbol: "€", code: "EUR", locale: "de-DE" },
+            RUB: { symbol: "₽", code: "RUB", locale: "ru-RU" }
+        };
+
+        // --- State Management ---
+        const state = {
+            adSpend: 10000,
+            revenue: 35000,
+            profitMargin: 60, // Gross margin percentage (COGS deduction)
+            agencyFee: 0,
+            isAdvancedOpen: false,
+            lang: 'he',
+            currency: 'ILS'
+        };
+
+        // --- DOM Elements ---
+        const adSpendInput = document.getElementById('adSpendInput');
+        const adSpendSlider = document.getElementById('adSpendSlider');
+        const revenueInput = document.getElementById('revenueInput');
+        const revenueSlider = document.getElementById('revenueSlider');
+        const marginInput = document.getElementById('marginInput');
+        const marginSlider = document.getElementById('marginSlider');
+        const feeInput = document.getElementById('feeInput');
+
+        const toggleAdvanced = document.getElementById('toggleAdvanced');
+        const advancedContainer = document.getElementById('advancedContainer');
+        const advancedIcon = document.getElementById('advancedIcon');
+
+        const roasDisplay = document.getElementById('roasDisplay');
+        const roasPercentageDisplay = document.getElementById('roasPercentageDisplay');
+        const gaugeProgress = document.getElementById('gaugeProgress');
+        const roasStatusBar = document.getElementById('roasStatusBar');
+
+        const roasBadge = document.getElementById('roasBadge');
+        const badgePing = document.getElementById('badgePing');
+        const badgeDot = document.getElementById('badgeDot');
+        const badgeText = document.getElementById('badgeText');
+
+        const netProfitDisplay = document.getElementById('netProfitDisplay');
+        const profitExplanation = document.getElementById('profitExplanation');
+        const roiDisplay = document.getElementById('roiDisplay');
+
+        const totalInvestmentDisplay = document.getElementById('totalInvestmentDisplay');
+        const cogsDisplay = document.getElementById('cogsDisplay');
+        const grossProfitDisplay = document.getElementById('grossProfitDisplay');
+        const breakEvenDisplay = document.getElementById('breakEvenDisplay');
+
+        const ctaBox = document.getElementById('ctaBox');
+        const ctaHeading = document.getElementById('ctaHeading');
+        const ctaDescription = document.getElementById('ctaDescription');
+
+        const resetBtn = document.getElementById('resetBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const bookingModal = document.getElementById('bookingModal');
+        const leadForm = document.getElementById('leadForm');
+        const formFeedback = document.getElementById('formFeedback');
+        const formError = document.getElementById('formError');
+
+        // Theme Toggle Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        // Locales/Selectors
+        const langSelector = document.getElementById('langSelector');
+        const currencySelector = document.getElementById('currencySelector');
+
+        // --- Event Listeners Initialization ---
+        function initListeners() {
+            // Bind sliders & inputs together with bi-directional syncing
+            syncInputs(adSpendInput, adSpendSlider, 'adSpend');
+            syncInputs(revenueInput, revenueSlider, 'revenue');
+            syncInputs(marginInput, marginSlider, 'profitMargin');
+
+            feeInput.addEventListener('input', (e) => {
+                state.agencyFee = parseFloat(e.target.value) || 0;
+                calculateMetrics();
+            });
+
+            // Toggle Advanced settings panel
+            toggleAdvanced.addEventListener('click', () => {
+                state.isAdvancedOpen = !state.isAdvancedOpen;
+                if (state.isAdvancedOpen) {
+                    advancedContainer.classList.remove('hidden');
+                    advancedIcon.classList.add('rotate-180');
+                } else {
+                    advancedContainer.classList.add('hidden');
+                    advancedIcon.classList.remove('rotate-180');
+                }
+            });
+
+            // Reset functionality
+            resetBtn.addEventListener('click', resetToDefaults);
+
+            // Export to PDF
+            downloadPdfBtn.addEventListener('click', exportToPDF);
+
+            // Dark Mode switch
+            themeToggle.addEventListener('click', toggleDarkMode);
+
+            // Language & Currency selectors
+            langSelector.addEventListener('change', (e) => {
+                setLanguage(e.target.value);
+            });
+            currencySelector.addEventListener('change', (e) => {
+                setCurrency(e.target.value);
+            });
+
+            // Lead Form submit handler
+            leadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                formFeedback.classList.add('hidden');
+                formError.classList.add('hidden');
+
+                const t = translations[state.lang];
+
+                // Check if key is configured
+                if (WEB3FORMS_ACCESS_KEY === "YOUR_ACCESS_KEY_HERE" || WEB3FORMS_ACCESS_KEY.trim() === "") {
+                    showFormError(t.errNoKey);
+                    return;
+                }
+
+                const submitBtn = leadForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerText;
+                
+                submitBtn.disabled = true;
+                submitBtn.innerText = t.submitting;
+
+                const name = document.getElementById('leadName').value;
+                const phone = document.getElementById('leadPhone').value;
+                const email = document.getElementById('leadEmail').value;
+
+                // Metrics calculation for sending
+                const roas = state.adSpend > 0 ? (state.revenue / state.adSpend).toFixed(2) : '0.00';
+                const cogs = state.revenue * (1 - (state.profitMargin / 100));
+                const grossProfit = state.revenue - cogs;
+                const totalSpend = state.adSpend + state.agencyFee;
+                const netProfit = grossProfit - totalSpend;
+                const roi = totalSpend > 0 ? ((netProfit / totalSpend) * 100).toFixed(0) : '0';
+
+                const payload = {
+                    access_key: WEB3FORMS_ACCESS_KEY,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    subject: `${t.leadEmailSubject} (${name})`,
+                    from_name: "ROAS Calculator Studio",
+                    message: `
+New lead generated from the ROAS Calculator:
+
+Client Information:
+------------------------------------------
+Name: ${name}
+Phone: ${phone}
+Email: ${email}
+Language Preference: ${state.lang.toUpperCase()}
+Currency Preference: ${state.currency}
+
+User Input Simulator Data:
+------------------------------------------
+Ad Budget: ${formatCurrency(state.adSpend)}
+Ad Revenue: ${formatCurrency(state.revenue)}
+Gross Margin Percentage: ${state.profitMargin}%
+Agency / Additional Fee: ${formatCurrency(state.agencyFee)}
+
+Generated Results:
+------------------------------------------
+ROAS achieved: ${roas}x (${(parseFloat(roas) * 100).toFixed(0)}%)
+Cost of Goods Sold (COGS): ${formatCurrency(cogs)}
+True Net Pocket Profit: ${formatCurrency(netProfit)}
+Return on Investment (ROI): ${roi}%
+                    `
+                };
+
+                try {
+                    const response = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.status === 200 && result.success) {
+                        leadForm.classList.add('hidden');
+                        formFeedback.innerText = t.successMessage;
+                        formFeedback.classList.remove('hidden');
+
+                        setTimeout(() => {
+                            closeConsultationModal();
+                            leadForm.reset();
+                            leadForm.classList.remove('hidden');
+                            formFeedback.classList.add('hidden');
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = originalBtnText;
+                        }, 4000);
+                    } else {
+                        showFormError(result.message || t.errGeneric);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = originalBtnText;
+                    }
+                } catch (error) {
+                    showFormError(t.errNetwork);
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalBtnText;
+                }
+            });
+        }
+
+        // --- Multi-language Dynamic Apply ---
+        function setLanguage(lang) {
+            state.lang = lang;
+            const t = translations[lang];
+
+            // Set Document Directions & Lang classes
+            const root = document.documentElement;
+            if (lang === 'he') {
+                root.dir = 'rtl';
+                root.lang = 'he';
+                root.classList.remove('ltr');
+                root.classList.add('rtl');
+                leadForm.classList.remove('text-left');
+                leadForm.classList.add('text-right');
+            } else {
+                root.dir = 'ltr';
+                root.lang = lang;
+                root.classList.remove('rtl');
+                root.classList.add('ltr');
+                leadForm.classList.remove('text-right');
+                leadForm.classList.add('text-left');
+            }
+
+            // Sync selector UI
+            langSelector.value = lang;
+
+            // Loop and translate all elements with data-i18n tags
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.innerText = t[key];
+                }
+            });
+
+            // Set inputs placeholders dynamically
+            document.getElementById('leadName').placeholder = t.formPlaceholderName;
+
+            // Update UI range min/max tags labels based on currency prefix/suffix
+            updateMinMaxRangeLabels();
+
+            // Recalculate and update view
+            calculateMetrics();
+        }
+
+        function setCurrency(curr) {
+            state.currency = curr;
+
+            // Sync selector UI
+            currencySelector.value = curr;
+
+            // Update currency indicators inside input fields
+            const symbol = currencyConfigs[curr].symbol;
+            document.querySelectorAll('.currency-symbol').forEach(el => {
+                el.innerText = symbol;
+            });
+
+            updateMinMaxRangeLabels();
+            calculateMetrics();
+        }
+
+        function updateMinMaxRangeLabels() {
+            const config = currencyConfigs[state.currency];
+            const symbol = config.symbol;
+            
+            // Re-render min/max text nodes dynamically
+            if (state.lang === 'ru') {
+                document.getElementById('adSpendMinLabel').innerText = `500 ${symbol}`;
+                document.getElementById('adSpendMaxLabel').innerText = `100,000 ${symbol}+`;
+                document.getElementById('revenueMinLabel').innerText = `0 ${symbol}`;
+                document.getElementById('revenueMaxLabel').innerText = `300,000 ${symbol}+`;
+            } else {
+                document.getElementById('adSpendMinLabel').innerText = `${symbol}500`;
+                document.getElementById('adSpendMaxLabel').innerText = `${symbol}100,000+`;
+                document.getElementById('revenueMinLabel').innerText = `${symbol}0`;
+                document.getElementById('revenueMaxLabel').innerText = `${symbol}300,000+`;
+            }
+        }
+
+        // --- Error Alert Visual Modal ---
+        function showFormError(message) {
+            formError.innerText = message;
+            formError.classList.remove('hidden');
+        }
+
+        // --- Helper Function: Bi-directional Input-Slider Syncing ---
+        function syncInputs(inputEl, sliderEl, stateKey) {
+            sliderEl.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                inputEl.value = val;
+                state[stateKey] = val;
+                calculateMetrics();
+            });
+
+            inputEl.addEventListener('input', (e) => {
+                let val = parseFloat(e.target.value) || 0;
+                const min = parseFloat(sliderEl.min);
+                const max = parseFloat(sliderEl.max);
+                
+                sliderEl.value = Math.min(Math.max(val, min), max);
+                state[stateKey] = val;
+                calculateMetrics();
+            });
+        }
+
+        // --- Core Calculations ---
+        function calculateMetrics() {
+            const adSpend = state.adSpend;
+            const revenue = state.revenue;
+            const margin = state.profitMargin / 100;
+            const fee = state.agencyFee;
+
+            const totalSpend = adSpend + fee;
+            const roas = adSpend > 0 ? (revenue / adSpend) : 0;
+            
+            const cogs = revenue * (1 - margin);
+            const grossProfit = revenue - cogs;
+            const breakEvenRoas = margin > 0 ? (1 / margin) : 0;
+            const netProfit = grossProfit - totalSpend;
+            const roi = totalSpend > 0 ? (netProfit / totalSpend) * 100 : 0;
+
+            updateUI(roas, netProfit, roi, totalSpend, cogs, grossProfit, breakEvenRoas);
+        }
+
+        // --- UI Rendering Updates ---
+        function updateUI(roas, netProfit, roi, totalSpend, cogs, grossProfit, breakEvenRoas) {
+            const t = translations[state.lang];
+
+            roasDisplay.innerText = `${roas.toFixed(2)}x`;
+            roasPercentageDisplay.innerText = `(${(roas * 100).toFixed(0)}%)`;
+
+            // Max standard ROAS visual gauge is 6x.
+            const maxVisualRoas = 6;
+            const percentageOfMax = Math.min(roas / maxVisualRoas, 1);
+            const circumference = 2 * Math.PI * 76; // r=76
+            const strokeDashoffset = circumference - (percentageOfMax * circumference);
+            gaugeProgress.style.strokeDashoffset = strokeDashoffset;
+
+            // Performance logic styles (Traffic lights remain green/amber/red for instant clarity)
+            let statusColor = '';
+            let statusText = '';
+            let alertBg = '';
+            let alertBorder = '';
+            let alertText = '';
+            let ctaTitle = '';
+            let ctaDesc = '';
+
+            if (roas < breakEvenRoas) {
+                statusColor = 'text-red-500';
+                statusText = t.statusLoss;
+                alertBg = 'bg-red-50 dark:bg-red-500/10';
+                alertBorder = 'border-red-200 dark:border-red-900/30';
+                alertText = 'text-red-600 dark:text-red-400';
+                
+                ctaTitle = t.ctaTitleLoss;
+                ctaDesc = t.ctaDescLoss;
+            } else if (roas >= breakEvenRoas && roas < 3) {
+                statusColor = 'text-amber-500';
+                statusText = t.statusBreakEven;
+                alertBg = 'bg-amber-50 dark:bg-amber-500/10';
+                alertBorder = 'border-amber-200 dark:border-amber-900/30';
+                alertText = 'text-amber-600 dark:text-amber-400';
+
+                ctaTitle = t.ctaTitleMid;
+                ctaDesc = t.ctaDescMid;
+            } else {
+                statusColor = 'text-emerald-500';
+                statusText = t.statusProfit;
+                alertBg = 'bg-emerald-50 dark:bg-emerald-500/10';
+                alertBorder = 'border-emerald-200 dark:border-emerald-900/30';
+                alertText = 'text-emerald-600 dark:text-emerald-400';
+
+                ctaTitle = t.ctaTitleProfit;
+                ctaDesc = t.ctaDescProfit;
+            }
+
+            // Apply gauge status line color
+            gaugeProgress.className = `gauge-transition ${statusColor}`;
+            roasStatusBar.className = `absolute top-0 right-0 left-0 h-2 bg-${statusColor.split('-')[1]}-500`;
+
+            // Badge Updates
+            roasBadge.className = `mt-4 px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm ${alertBg} ${alertText} border ${alertBorder}`;
+            badgeDot.className = `relative inline-flex rounded-full h-2 w-2 bg-${statusColor.split('-')[1]}-500`;
+            badgePing.className = `animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-${statusColor.split('-')[1]}-500`;
+            badgeText.innerText = statusText;
+
+            // Financial Fields Displays
+            netProfitDisplay.innerText = `${netProfit >= 0 ? '' : '-'}${formatCurrency(Math.abs(netProfit))}`;
+            if (netProfit < 0) {
+                netProfitDisplay.className = "text-2xl font-extrabold text-red-500";
+            } else {
+                netProfitDisplay.className = "text-2xl font-extrabold text-slate-900 dark:text-white";
+            }
+
+            roiDisplay.innerText = `${roi.toFixed(0)}%`;
+            if (roi < 0) {
+                roiDisplay.className = "text-2xl font-extrabold text-red-500";
+            } else {
+                roiDisplay.className = "text-2xl font-extrabold text-emerald-500";
+            }
+
+            // Update Table Values
+            totalInvestmentDisplay.innerText = formatCurrency(totalSpend);
+            cogsDisplay.innerText = formatCurrency(cogs);
+            grossProfitDisplay.innerText = formatCurrency(grossProfit);
+            breakEvenDisplay.innerText = `${breakEvenRoas.toFixed(2)}x`;
+
+            // CTA Box updates
+            ctaHeading.innerText = ctaTitle;
+            ctaDescription.innerText = ctaDesc;
+        }
+
+        // Currency Formatting Engine
+        function formatCurrency(val) {
+            const config = currencyConfigs[state.currency];
+            const symbol = config.symbol;
+            
+            if (state.currency === 'RUB' || state.lang === 'ru') {
+                return val.toLocaleString(config.locale, { maximumFractionDigits: 0 }) + ' ' + symbol;
+            } else {
+                return symbol + val.toLocaleString(config.locale, { maximumFractionDigits: 0 });
+            }
+        }
+
+        // --- Dark Mode Logic ---
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-moon text-slate-600";
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = "fa-solid fa-sun text-amber-400";
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = "fa-solid fa-sun text-amber-400";
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-moon text-slate-600";
+            }
+        }
+
+        // --- Reset form ---
+        function resetToDefaults() {
+            state.adSpend = 10000;
+            state.revenue = 35000;
+            state.profitMargin = 60;
+            state.agencyFee = 0;
+
+            adSpendInput.value = 10000;
+            adSpendSlider.value = 10000;
+            revenueInput.value = 35000;
+            revenueSlider.value = 35000;
+            marginInput.value = 60;
+            marginSlider.value = 60;
+            feeInput.value = 0;
+
+            calculateMetrics();
+        }
+
+        // --- Lead Capture Modal Controls ---
+        function openConsultationModal() {
+            bookingModal.classList.remove('hidden');
+        }
+
+        function closeConsultationModal() {
+            bookingModal.classList.add('hidden');
+        }
+
+        bookingModal.addEventListener('click', (e) => {
+            if (e.target === bookingModal) {
+                closeConsultationModal();
+            }
+        });
+
+        // --- PDF Generation Implementation ---
+        function exportToPDF() {
+            const element = document.getElementById('reportArea');
+            const opt = {
+                margin:       10,
+                filename:     `ROAS_Performance_Report_${new Date().toISOString().slice(0,10)}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, direction: state.lang === 'he' ? 'rtl' : 'ltr' },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        // --- URL Query Parameter Parser (NEW) ---
+        function applyUrlConfigurations() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let urlLang = urlParams.get('lang');
+            let urlCurrency = urlParams.get('currency');
+
+            // Normalize strings
+            if (urlLang) urlLang = urlLang.toLowerCase();
+            if (urlCurrency) urlCurrency = urlCurrency.toUpperCase();
+
+            const supportedLangs = ['he', 'en', 'ru'];
+            const supportedCurrencies = ['ILS', 'USD', 'EUR', 'RUB'];
+
+            // 1. Determine target language
+            let targetLang = 'he'; // System fallback
+            if (supportedLangs.includes(urlLang)) {
+                targetLang = urlLang;
+            }
+
+            // 2. Determine target currency with smart matching based on language
+            let targetCurrency = 'ILS';
+            if (targetLang === 'en') targetCurrency = 'USD';
+            if (targetLang === 'ru') targetCurrency = 'RUB';
+
+            // Overwrite currency if explicitly requested in URL query
+            if (supportedCurrencies.includes(urlCurrency)) {
+                targetCurrency = urlCurrency;
+            }
+
+            // Apply configuration states to UI & Engine
+            setLanguage(targetLang);
+            setCurrency(targetCurrency);
+        }
+
+        // Bootstrap App
+        window.onload = function() {
+            initTheme();
+            initListeners();
+            
+            // Auto detect from URL Parameters, fall back to He/ILS if not defined
+            applyUrlConfigurations(); 
+        }
+    </script>
+</body>
+</html>
